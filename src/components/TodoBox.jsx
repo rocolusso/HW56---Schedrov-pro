@@ -20,11 +20,11 @@ const TodoBox = (props) => {
   const submitHandler = (e) => {
     e.preventDefault();
     setTodos((todo) => [
-      ...todo,
       {
         title: inputValue,
         id: Date.now(),
       },
+      ...todo
     ]);
     setInputValue("");
   };

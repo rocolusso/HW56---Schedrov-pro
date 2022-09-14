@@ -1,38 +1,48 @@
 import React, { useState, useEffect } from "react";
 import Item from "./Item";
 
-const TodoBox = (props) => {
+const TodoBox = () => {
   const todoKey = "data";
-  const [inputValue, setInputValue] = useState(props.value);
+  const [inputValue, setInputValue] = useState("");
   const [todos, setTodos] = useState(
     JSON.parse(localStorage.getItem(todoKey)) || []
   );
 
-  useEffect(() => {
-    setInputValue(props.value);
-  }, [props.value]);
+  const [alert, setAlert] = useState(false);
 
   useEffect(() => {
     if (!todos.length) return localStorage.removeItem(todoKey);
     localStorage.setItem(todoKey, JSON.stringify(todos));
   }, [todos]);
 
+  const inputHandler = (e) => {
+    e.preventDefault();
+    setAlert(false);
+    setInputValue(e.target.value);
+  };
+
   const submitHandler = (e) => {
     e.preventDefault();
-    setTodos((todo) => [
-      {
-        title: inputValue,
-        id: Date.now(),
-      },
-      ...todo
-    ]);
-    setInputValue("");
+    if (inputValue !== "".trim()) {
+      setTodos((todo) => [
+        {
+          title: inputValue,
+          id: Date.now(),
+        },
+        ...todo,
+      ]);
+      setInputValue("");
+    } else {
+      setAlert(true);
+    }
   };
 
   const removeHandler = (e) => {
     if (todos.length === 1) {
+      setAlert(false);
       setTodos([]);
     } else {
+      setAlert(false);
       setTodos(
         todos.filter(
           (item) =>
@@ -49,7 +59,7 @@ const TodoBox = (props) => {
         <form onSubmit={submitHandler} className="d-flex">
           <div className="me-3">
             <input
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={inputHandler}
               type="text"
               value={inputValue}
               required=""
@@ -61,13 +71,25 @@ const TodoBox = (props) => {
             add
           </button>
         </form>
+        {alert && (
+          <div
+            onClick={(e) => {
+              setAlert(false);
+            }}
+            style={{ width: "20%" }}
+            className="alert alert-info mt-2"
+            role="alert"
+          >
+            Input field error
+          </div>
+        )}
       </div>
       {todos.map((item) => (
         <Item
           key={item.id}
           id={item.id}
-          onClick={removeHandler}
-          text={item.title}
+          onRemove={removeHandler}
+          task={item.title}
         />
       ))}
     </>

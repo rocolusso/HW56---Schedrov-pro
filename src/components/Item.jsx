@@ -6,7 +6,7 @@ const Item = (props) => {
       <div className="row">
         <div className="col-auto">
           <button
-            onClick={props.onClick}
+            onClick={props.onRemove}
             type="button"
             className="btn btn-primary btn-sm"
           >
@@ -14,7 +14,7 @@ const Item = (props) => {
           </button>
         </div>
         <div className="col" data-id={props.id}>
-          {props.text}
+          {props.task}
         </div>
       </div>
       <hr />
